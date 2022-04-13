@@ -5,12 +5,15 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 const { allowedNodeEnvironmentFlags } = require('process');
+const res = require('express/lib/response');
 
 //USE THESE MIDDLEWARE FUNCTIONS EVERY TIME YOU CREATE A SERVER THAT ACCEPTS POST DATA:
 //parse incoming string or array data
 app.use(express.urlencoded({extended: true}));
 //parse incoming json data
 app.use(express.json());
+
+app.use(express.static('public'));
 
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
@@ -110,6 +113,23 @@ app.post('/api/animals', (req, res) => {
     const animal = createNewAnimal(req.body, animals);
     res.json(animal);
   }
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+app.get('/animals', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+app.get('/zookeepers', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+//the wildcard should always come last
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
